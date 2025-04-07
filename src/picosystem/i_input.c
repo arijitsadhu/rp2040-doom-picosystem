@@ -132,21 +132,19 @@ void buttons_getevent() {
                     button_event(key_right, pressed);
                     break;
                 case BTN_D:
-                    if (pressed && button_state[BTN_1]) {
-                        button_state[i] = 3;
-                        alt = true;
-                    }
-                    if (alt) {
-                        button_event(key_nextweapon, pressed);
-                    } else {
-                        button_event(key_down, pressed);
-                    }
+                    button_event(key_down, pressed);
                     break;
-                case BTN_1:
+                case BTN_B:
                     button_event(key_use, pressed);
                     break;
-                case BTN_2:
+                case BTN_A:
                     button_event(key_fire, pressed);
+                    break;
+                case BTN_X:
+                    button_event(key_nextweapon, pressed);
+                    break;
+                case BTN_Y:
+                    button_event(key_prevweapon, pressed);
                     break;
             }
         }

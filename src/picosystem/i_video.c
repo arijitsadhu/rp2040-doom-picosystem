@@ -367,7 +367,7 @@ static void __not_in_flash_func(free_buffer_callback)() {
     *((io_rw_32 *) (PPB_BASE + M0PLUS_NVIC_ISPR_OFFSET)) = 1u << LOW_PRIO_IRQ;
 }
 
-#define FRAME_PERIOD J_OLED_FRAME_PERIOD
+#define FRAME_PERIOD PICOSYSTEM_LCD_FRAME_PERIOD
 
 // some oleds need 2 park lines, but that's not as robust
 #define PARK_LINES 1
@@ -420,34 +420,34 @@ uint8_t byte_reverse(uint8_t b) {
 
 static void display_driver_init() {
 
-    gpio_init(J_OLED_CS);
-    gpio_set_dir(J_OLED_CS, GPIO_OUT);
-    gpio_put(J_OLED_CS, 0);
+    gpio_init(PICOSYSTEM_LCD_CS);
+    gpio_set_dir(PICOSYSTEM_LCD_CS, GPIO_OUT);
+    gpio_put(PICOSYSTEM_LCD_CS, 0);
 
-    gpio_init(J_OLED_RESET);
-    gpio_set_dir(J_OLED_RESET, GPIO_OUT);
-    gpio_put(J_OLED_RESET, 0);
+    gpio_init(PICOSYSTEM_LCD_RESET);
+    gpio_set_dir(PICOSYSTEM_LCD_RESET, GPIO_OUT);
+    gpio_put(PICOSYSTEM_LCD_RESET, 0);
 
-    gpio_init(J_OLED_DC);
-    gpio_set_dir(J_OLED_DC, GPIO_OUT);
-    gpio_put(J_OLED_DC, 0);
+    gpio_init(PICOSYSTEM_LCD_DC);
+    gpio_set_dir(PICOSYSTEM_LCD_DC, GPIO_OUT);
+    gpio_put(PICOSYSTEM_LCD_DC, 0);
 
-    gpio_put(J_OLED_RESET, 0);
+    gpio_put(PICOSYSTEM_LCD_RESET, 0);
     sleep_ms(1);
-    gpio_put(J_OLED_RESET, 1);
+    gpio_put(PICOSYSTEM_LCD_RESET, 1);
 
     gpio_set_function(PICO_DEFAULT_SPI_SCK_PIN, GPIO_FUNC_SPI);
     gpio_set_function(PICO_DEFAULT_SPI_TX_PIN, GPIO_FUNC_SPI);
     spi_init(spi0, 62500000);
     spi_set_format(spi0, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
 
-    gpio_put(J_OLED_CS, 1);
-    gpio_put(J_OLED_DC, 0);
-    gpio_put(J_OLED_CS, 0);
+    gpio_put(PICOSYSTEM_LCD_CS, 1);
+    gpio_put(PICOSYSTEM_LCD_DC, 0);
+    gpio_put(PICOSYSTEM_LCD_CS, 0);
 
     spi_write_blocking(spi0, command_initialise, sizeof(command_initialise));
 
-    gpio_put(J_OLED_CS, 1);
+    gpio_put(PICOSYSTEM_LCD_CS, 1);
 }
 #else
 
@@ -551,9 +551,9 @@ static void core1() {
 
     while (true) {
 #if PICO_ON_DEVICE
-        gpio_put(J_OLED_CS, 0);
+        gpio_put(PICOSYSTEM_LCD_CS, 0);
 
-        gpio_put(J_OLED_DC, 0);
+        gpio_put(PICOSYSTEM_LCD_DC, 0);
         spi_write_blocking(spi0, command_park, sizeof(command_park));
 #endif
 
@@ -626,13 +626,13 @@ static void core1() {
         }
 
 #if PICO_ON_DEVICE
-        gpio_put(J_OLED_DC, 1);
+        gpio_put(PICOSYSTEM_LCD_DC, 1);
         spi_write_blocking(spi0, field_buffer, sizeof(field_buffer));
-        gpio_put(J_OLED_DC, 0);
+        gpio_put(PICOSYSTEM_LCD_DC, 0);
 
         spi_write_blocking(spi0, command_run, sizeof(command_run));
 
-        gpio_put(J_OLED_CS, 1);
+        gpio_put(PICOSYSTEM_LCD_CS, 1);
 #endif
 
         frame_time = delayed_by_us(frame_time, FRAME_PERIOD);
